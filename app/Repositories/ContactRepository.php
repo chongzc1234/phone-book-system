@@ -16,10 +16,21 @@ class ContactRepository implements ContactRepositoryInterface
         $this->contactModel = new ContactModel();
     }
 
-    public function getPaginatedContactsByUser(int $userId, int $perPage = 5)
+    public function getPaginatedContactsByUser(int $userId, int $perPage = 5, string $search = '')
     {
-        $contacts = $this->contactModel
-            ->where('user_id', $userId)
+        $query = $this->contactModel->where('user_id', $userId);
+
+        $search = trim($search);
+        if ($search !== '') {
+            $query
+                ->groupStart()
+                    ->like('name', $search)
+                    ->orLike('phone', $search)
+                    ->orLike('email', $search)
+                ->groupEnd();
+        }
+
+        $contacts = $query
             ->orderBy('created_at', 'DESC')
             ->paginate($perPage);
 

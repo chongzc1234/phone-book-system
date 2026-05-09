@@ -20,10 +20,19 @@ class ContactController extends BaseController
     public function index()
     {
         $userId = session()->get('user_id');
+        $search = trim((string) $this->request->getGet('search'));
+
         $data = [
-            'contacts' => $this->contactRepo->getPaginatedContactsByUser($userId, 5),
-            'pager'    => $this->contactRepo->getPager()
+            'contacts' => $this->contactRepo->getPaginatedContactsByUser($userId, 5, $search),
+            'pager'    => $this->contactRepo->getPager(),
+            'search'   => $search,
         ];
+
+        if ($this->request->isAJAX()) {
+            return $this->response->setJSON([
+                'html' => view('contacts/_list', $data),
+            ]);
+        }
         
         return view('contacts/index', $data);
     }

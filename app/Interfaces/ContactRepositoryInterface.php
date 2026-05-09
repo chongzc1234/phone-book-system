@@ -4,7 +4,7 @@ namespace App\Interfaces;
 
 interface ContactRepositoryInterface
 {
-    public function getPaginatedContactsByUser(int $userId, int $perPage = 5);
+    public function getPaginatedContactsByUser(int $userId, int $perPage = 5, string $search = '');
     public function getPager();
     public function saveContact(array $data);
     public function getContactByIdSecurely(int $contactId, int $userId);

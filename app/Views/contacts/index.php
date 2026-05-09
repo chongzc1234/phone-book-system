@@ -1,92 +1,87 @@
 <?= $this->extend('layout/main') ?>
 
+<?= $this->section('styles') ?>
+<link href="/assets/css/contacts.css" rel="stylesheet">
+<?= $this->endSection() ?>
+
 <?= $this->section('content') ?>
-<div class="row mt-4">
-    <div class="col-12 d-flex justify-content-between align-items-center mb-4">
-        <h2>My Phone Book</h2>
+<main class="contacts-page" x-data="contactsBrowser()" @click="handleAjaxLink($event)">
+    <section class="contacts-hero">
         <div>
-            <span class="me-3">Welcome, <?= session()->get('username') ?>!</span>
-            <!-- Button to trigger the add contact modal -->
-            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addContactModal">+ Add Contact</button>
-            <a href="/logout" class="btn btn-outline-danger">Logout</a>
+            <p class="contacts-kicker">Personal directory</p>
+            <h1>My Phone Book</h1>
+            <p class="contacts-welcome">Welcome, <?= esc(session()->get('username')) ?>. Keep every important number within reach.</p>
         </div>
-    </div>
-</div>
-
-<!-- 闪存提示 -->
-<?php if(session()->getFlashdata('success')): ?>
-    <div id="flash-success" class="alert alert-success"><?= session()->getFlashdata('success') ?></div>
-<?php endif; ?>
-<?php if(session()->getFlashdata('error')): ?>
-    <div class="alert alert-danger"><?= session()->getFlashdata('error') ?></div>
-<?php endif; ?>
-
-<!-- Contacts list (card-style responsive layout) -->
-<div class="row">
-    <?php if(empty($contacts)): ?>
-        <div class="col-12 text-center text-muted mt-5">
-            <p>No contacts found. Start adding some!</p>
+        <div class="contacts-actions">
+            <button class="btn contact-primary-btn" data-bs-toggle="modal" data-bs-target="#addContactModal">
+                <span aria-hidden="true">+</span>
+                Add Contact
+            </button>
+            <a href="/logout" class="btn contact-ghost-btn">Logout</a>
         </div>
-    <?php else: ?>
-        <?php foreach($contacts as $contact): ?>
-            <div class="col-md-6 col-lg-4 mb-4" id="contact-card-<?= $contact['id'] ?>">
-                <div class="card h-100 shadow-sm">
-                    <div class="card-body text-center">
-                        <!-- Display image, use placeholder if none -->
-                        <?php $imgSrc = ($contact['image_path'] == 'default.png') ? 'https://ui-avatars.com/api/?name='.urlencode($contact['name']).'&background=random' : base_url('uploads/'.$contact['image_path']); ?>
-                        <img src="<?= $imgSrc ?>" class="rounded-circle mb-3" style="width: 100px; height: 100px; object-fit: cover; border: 3px solid #eee;">
-                        
-                        <h5 class="card-title"><?= esc($contact['name']) ?></h5>
-                        <p class="card-text text-muted mb-1">📞 <?= esc($contact['phone']) ?></p>
-                        <p class="card-text text-muted">✉️ <?= esc($contact['email']) ?? 'N/A' ?></p>
-                        
-                        <div class="d-flex gap-2 mt-2">
-                            <button class="btn btn-sm btn-outline-primary w-100" onclick="openEditModal(<?= $contact['id'] ?>)">Edit</button>
-                            <button class="btn btn-sm btn-outline-danger w-100" onclick="deleteContact(<?= $contact['id'] ?>)">Delete</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        <?php endforeach; ?>
+    </section>
+
+    <section class="contacts-toolbar" aria-label="Contact tools">
+        <form class="contacts-search" method="GET" action="/contacts" data-contact-search-form @submit.prevent="submitSearch($event)">
+            <span aria-hidden="true"></span>
+            <input type="search" id="contactSearch" name="search" value="<?= esc($search ?? '') ?>" placeholder="Search name, phone, or email" autocomplete="off" x-model="query" @input.debounce.450ms="$event.target.form.requestSubmit()">
+            <button type="submit">Search</button>
+            <a href="/contacts" aria-label="Clear search" data-ajax-link x-show="query.length > 0" @click="query = ''" style="display: none;">Clear</a>
+        </form>
+    </section>
+
+    <?php if(session()->getFlashdata('success')): ?>
+        <div id="flash-success" class="contact-alert contact-alert-success"><?= esc(session()->getFlashdata('success')) ?></div>
     <?php endif; ?>
-</div>
+    <?php if(session()->getFlashdata('error')): ?>
+        <div class="contact-alert contact-alert-danger"><?= esc(session()->getFlashdata('error')) ?></div>
+    <?php endif; ?>
 
-<!-- Pagination (Requirement A6) -->
-<div class="d-flex justify-content-center mt-4">
-    <?= $pager->links() ?>
-</div>
+    <div class="contacts-results" x-ref="results" :class="{ 'is-loading': loading }" aria-live="polite">
+        <?= view('contacts/_list', [
+            'contacts' => $contacts,
+            'pager'    => $pager,
+            'search'   => $search ?? '',
+        ]) ?>
+    </div>
+</main>
 
 <!-- Bootstrap modal for adding a contact -->
-<div class="modal fade" id="addContactModal" tabindex="-1">
-  <div class="modal-dialog">
+<div class="modal fade contact-modal" id="addContactModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title">New Contact</h5>
+        <div>
+            <p class="modal-kicker">Create contact</p>
+            <h5 class="modal-title">New Contact</h5>
+        </div>
         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
       <form action="/contacts/store" method="POST" enctype="multipart/form-data">
           <div class="modal-body">
               <?= csrf_field() ?>
-              <div class="mb-3">
-                  <label>Name <span class="text-danger">*</span></label>
-                  <input type="text" name="name" class="form-control" required>
+              <div class="contact-form-grid">
+              <div class="contact-form-field">
+                  <label for="add_name">Name <span>*</span></label>
+                  <input type="text" name="name" id="add_name" class="form-control" required>
               </div>
-              <div class="mb-3">
-                  <label>Phone <span class="text-danger">*</span></label>
-                  <input type="text" name="phone" class="form-control" required>
+              <div class="contact-form-field">
+                  <label for="add_phone">Phone <span>*</span></label>
+                  <input type="text" name="phone" id="add_phone" class="form-control" required>
               </div>
-              <div class="mb-3">
-                  <label>Email</label>
-                  <input type="email" name="email" class="form-control">
+              <div class="contact-form-field">
+                  <label for="add_email">Email</label>
+                  <input type="email" name="email" id="add_email" class="form-control">
               </div>
-              <div class="mb-3">
-                  <label>Profile Image (Optional)</label>
-                  <input type="file" name="image" class="form-control" accept="image/png, image/jpeg">
+              <div class="contact-form-field">
+                  <label for="add_image">Profile Image</label>
+                  <input type="file" name="image" id="add_image" class="form-control" accept="image/png, image/jpeg">
+              </div>
               </div>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            <button type="submit" class="btn btn-primary">Save Contact</button>
+            <button type="button" class="btn contact-ghost-btn" data-bs-dismiss="modal">Close</button>
+            <button type="submit" class="btn contact-primary-btn">Save Contact</button>
           </div>
       </form>
     </div>
@@ -94,11 +89,14 @@
 </div>
 
 <!-- 编辑联系人的 Bootstrap Modal -->
-<div class="modal fade" id="editContactModal" tabindex="-1">
-  <div class="modal-dialog">
+<div class="modal fade contact-modal" id="editContactModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title">Edit Contact</h5>
+        <div>
+            <p class="modal-kicker">Update record</p>
+            <h5 class="modal-title">Edit Contact</h5>
+        </div>
         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
       <!-- form action 将由 JS 动态修改 -->
@@ -106,31 +104,33 @@
           <div class="modal-body">
               <?= csrf_field() ?>
               <input type="hidden" name="remove_image" id="edit_remove_image" value="0">
-              <div class="mb-3 text-center">
-                  <img id="editProfilePreview" src="https://ui-avatars.com/api/?name=Preview&background=random" class="rounded-circle mb-3" style="width: 100px; height: 100px; object-fit: cover; border: 3px solid #eee;">
-                  <button type="button" class="btn btn-sm btn-outline-danger" id="removeProfilePictureBtn" onclick="markRemoveImage()">Remove Profile Picture</button>
+              <div class="edit-preview">
+                  <img id="editProfilePreview" src="https://ui-avatars.com/api/?name=Preview&background=17384f&color=fff&bold=true" alt="Profile preview">
+                  <button type="button" class="contact-action-btn delete" id="removeProfilePictureBtn" onclick="markRemoveImage()">Remove Profile Picture</button>
               </div>
-              <div class="mb-3">
-                  <label>Name <span class="text-danger">*</span></label>
+              <div class="contact-form-grid">
+              <div class="contact-form-field">
+                  <label for="edit_name">Name <span>*</span></label>
                   <input type="text" name="name" id="edit_name" class="form-control" required>
               </div>
-              <div class="mb-3">
-                  <label>Phone <span class="text-danger">*</span></label>
+              <div class="contact-form-field">
+                  <label for="edit_phone">Phone <span>*</span></label>
                   <input type="text" name="phone" id="edit_phone" class="form-control" required>
               </div>
-              <div class="mb-3">
-                  <label>Email</label>
+              <div class="contact-form-field">
+                  <label for="edit_email">Email</label>
                   <input type="email" name="email" id="edit_email" class="form-control">
               </div>
-              <div class="mb-3">
-                  <label>Update Profile Image (Optional)</label>
-                  <input type="file" name="image" class="form-control" accept="image/png, image/jpeg">
-                  <small class="text-muted">Leave empty to keep current image.</small>
+              <div class="contact-form-field">
+                  <label for="edit_image">Update Profile Image</label>
+                  <input type="file" name="image" id="edit_image" class="form-control" accept="image/png, image/jpeg">
+                  <small>Leave empty to keep current image.</small>
+              </div>
               </div>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            <button type="submit" class="btn btn-primary">Update Changes</button>
+            <button type="button" class="btn contact-ghost-btn" data-bs-dismiss="modal">Close</button>
+            <button type="submit" class="btn contact-primary-btn">Update Changes</button>
           </div>
       </form>
     </div>
@@ -139,6 +139,62 @@
 
 <!-- Ajax-->
 <script>
+function contactsBrowser() {
+    return {
+        loading: false,
+        query: new URLSearchParams(window.location.search).get('search') || '',
+        async load(url) {
+            this.loading = true;
+
+            try {
+                const response = await fetch(url, {
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Accept': 'application/json'
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Request failed');
+                }
+
+                const data = await response.json();
+                const results = this.$refs.results;
+                results.innerHTML = data.html;
+                results.classList.remove('is-entering');
+                void results.offsetWidth;
+                results.classList.add('is-entering');
+                setTimeout(() => results.classList.remove('is-entering'), 420);
+                window.history.pushState({}, '', url);
+            } catch (error) {
+                Swal.fire('Error!', 'Could not load contacts.', 'error');
+            } finally {
+                this.loading = false;
+            }
+        },
+        handleAjaxLink(event) {
+            const link = event.target.closest('[data-ajax-link], .contacts-pagination a');
+
+            if (!link || link.closest('.disabled') || link.closest('.active')) {
+                return;
+            }
+
+            event.preventDefault();
+            this.load(link.href);
+        },
+        submitSearch(event) {
+            const form = event.target;
+            const formData = new FormData(form);
+            const params = new URLSearchParams(formData);
+            const query = params.toString();
+            const url = query ? `${form.action}?${query}` : form.action;
+
+            this.query = formData.get('search') || '';
+            this.load(url);
+        }
+    };
+}
+
 function openEditModal(id) {
     // 1. 发送 Fetch 请求获取该联系人的数据
     fetch(`/contacts/edit/${id}`, {
@@ -157,7 +213,7 @@ function openEditModal(id) {
         document.getElementById('removeProfilePictureBtn').disabled = data.image_path === 'default.png';
 
         const previewSrc = data.image_path === 'default.png'
-            ? `https://ui-avatars.com/api/?name=${encodeURIComponent(data.name)}&background=random`
+            ? `https://ui-avatars.com/api/?name=${encodeURIComponent(data.name)}&background=17384f&color=fff&bold=true`
             : `<?= base_url('uploads/') ?>${data.image_path}`;
 
         document.getElementById('editProfilePreview').src = previewSrc;
@@ -176,7 +232,7 @@ function openEditModal(id) {
 
 function markRemoveImage() {
     document.getElementById('edit_remove_image').value = '1';
-    document.getElementById('editProfilePreview').src = 'https://ui-avatars.com/api/?name=No+Image&background=random';
+    document.getElementById('editProfilePreview').src = 'https://ui-avatars.com/api/?name=No+Image&background=17384f&color=fff&bold=true';
     document.getElementById('removeProfilePictureBtn').innerText = 'Profile Picture Will Be Removed';
 }
 
@@ -205,7 +261,13 @@ function deleteContact(id) {
             .then(data => {
                 if(data.status === 'success') {
                     // remove card DOM，without refresh page
-                    document.getElementById(`contact-card-${id}`).remove();
+                    const card = document.getElementById(`contact-card-${id}`);
+                    if (card) {
+                        card.classList.add('is-removing');
+                        setTimeout(() => {
+                            card.remove();
+                        }, 220);
+                    }
                     Swal.fire('Deleted!', 'Contact has been removed.', 'success');
                 } else {
                     Swal.fire('Error!', 'Failed to delete contact.', 'error');
@@ -220,6 +282,7 @@ function deleteContact(id) {
 
 (function () {
     const flashSuccess = document.getElementById('flash-success');
+
     if (flashSuccess) {
         setTimeout(() => {
             flashSuccess.style.transition = 'opacity 0.5s ease';
@@ -229,4 +292,8 @@ function deleteContact(id) {
     }
 })();
 </script>
+<?= $this->endSection() ?>
+
+<?= $this->section('scripts') ?>
+<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 <?= $this->endSection() ?>
