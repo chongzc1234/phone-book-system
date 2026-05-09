@@ -18,7 +18,7 @@
             <p class="auth-kicker">Start your phone book</p>
             <h1 id="register-title">Register</h1>
 
-            <form action="/registerProcess" method="POST" class="auth-form">
+            <form action="/registerProcess" method="POST" class="auth-form" data-register-form>
                 <?= csrf_field() ?>
 
                 <div class="auth-field">

@@ -42,11 +42,23 @@ class ContactController extends BaseController
         // Strict form validation, including image extension and size validation (max 2MB)
         $rules = [
             'name'  => 'required|min_length[2]',
-            'phone' => 'required|min_length[8]',
+            'phone' => 'required|min_length[8]|regex_match[/^[\d+\-\(\)\s\.]+$/]',
+            'email' => 'valid_email',
             'image' => 'is_image[image]|ext_in[image,png,jpg,jpeg]|max_size[image,2048]'
         ];
 
-        if (!$this->validate($rules)) {
+        $messages = [
+            'phone' => [
+                'required' => 'Phone is required.',
+                'min_length' => 'Phone must be at least 8 characters long.',
+                'regex_match' => 'Phone format is invalid. Use numbers, +, -, (), or spaces.'
+            ],
+            'email' => [
+                'valid_email' => 'Please enter a valid email address.'
+            ]
+        ];
+
+        if (!$this->validate($rules, $messages)) {
             session()->setFlashdata('error', $this->validator->listErrors());
             return redirect()->to('/contacts');
         }
@@ -103,11 +115,23 @@ class ContactController extends BaseController
         // validation rules, including image validation
         $rules = [
             'name'  => 'required|min_length[2]',
-            'phone' => 'required|min_length[8]',
+            'phone' => 'required|min_length[8]|regex_match[/^[\d+\-\(\)\s\.]+$/]',
+            'email' => 'valid_email',
             'image' => 'is_image[image]|ext_in[image,png,jpg,jpeg]|max_size[image,2048]'
         ];
 
-        if (!$this->validate($rules)) {
+        $messages = [
+            'phone' => [
+                'required' => 'Phone is required.',
+                'min_length' => 'Phone must be at least 8 characters long.',
+                'regex_match' => 'Phone format is invalid. Use numbers, +, -, (), or spaces.'
+            ],
+            'email' => [
+                'valid_email' => 'Please enter a valid email address.'
+            ]
+        ];
+
+        if (!$this->validate($rules, $messages)) {
             session()->setFlashdata('error', $this->validator->listErrors());
             return redirect()->to('/contacts');
         }
