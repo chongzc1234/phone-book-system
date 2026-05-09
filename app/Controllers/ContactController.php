@@ -2,6 +2,7 @@
 
 namespace App\Controllers;
 
+use App\Interfaces\ContactRepositoryInterface;
 use App\Repositories\ContactRepository;
 use CodeIgniter\API\ResponseTrait;
 
