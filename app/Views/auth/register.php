@@ -10,32 +10,8 @@
         <a class="auth-brand" href="/login" aria-label="Phone Book System home">PhoneBook</a>
     </nav>
 
-    <div class="parallax-layer aurora" data-depth="0.02" aria-hidden="true"></div>
-    <div class="parallax-layer moon" data-depth="0.05" aria-hidden="true"></div>
-    <div class="parallax-layer stars" data-depth="0.03" aria-hidden="true"></div>
-    <div class="parallax-layer mountain mountain-back" data-depth="0.07" aria-hidden="true"></div>
-    <div class="parallax-layer mountain mountain-front" data-depth="0.11" aria-hidden="true"></div>
-    <div class="parallax-layer mist mist-back" data-depth="0.13" aria-hidden="true"></div>
-    <div class="parallax-layer trees trees-back" data-depth="0.18" aria-hidden="true"></div>
-    <div class="parallax-layer mist mist-front" data-depth="0.22" aria-hidden="true"></div>
-    <div class="parallax-layer trees trees-mid" data-depth="0.28" aria-hidden="true"></div>
-    <div class="parallax-layer trees trees-front" data-depth="0.42" aria-hidden="true"></div>
-    <div class="parallax-layer ground" data-depth="0.5" aria-hidden="true"></div>
-    <div class="parallax-layer foliage" data-depth="0.62" aria-hidden="true"></div>
-    <div class="parallax-layer stag" data-depth="0.36" aria-hidden="true">
-        <span class="stag-body"></span>
-        <span class="stag-neck"></span>
-        <span class="stag-head"></span>
-        <span class="stag-antler left"></span>
-        <span class="stag-antler right"></span>
-        <span class="stag-leg one"></span>
-        <span class="stag-leg two"></span>
-        <span class="stag-leg three"></span>
-        <span class="stag-leg four"></span>
-    </div>
-    <div class="fireflies parallax-layer" data-depth="0.46" aria-hidden="true">
-        <span></span><span></span><span></span><span></span><span></span><span></span>
-    </div>
+    <div class="auth-bg" aria-hidden="true"></div>
+    <div class="auth-vignette" aria-hidden="true"></div>
 
     <section class="auth-panel-wrap auth-panel-wrap-register" aria-labelledby="register-title">
         <div class="auth-panel" data-tilt-card>

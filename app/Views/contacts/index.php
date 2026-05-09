@@ -8,9 +8,8 @@
 <main class="contacts-page" x-data="contactsBrowser()" @click="handleAjaxLink($event)">
     <section class="contacts-hero">
         <div>
-            <p class="contacts-kicker">Personal directory</p>
             <h1>My Phone Book</h1>
-            <p class="contacts-welcome">Welcome, <?= esc(session()->get('username')) ?>. Keep every important number within reach.</p>
+            <p class="contacts-welcome">Welcome, <?= esc(session()->get('username')) ?>.</p>
         </div>
         <div class="contacts-actions">
             <button class="btn contact-primary-btn" data-bs-toggle="modal" data-bs-target="#addContactModal">
@@ -23,10 +22,19 @@
 
     <section class="contacts-toolbar" aria-label="Contact tools">
         <form class="contacts-search" method="GET" action="/contacts" data-contact-search-form @submit.prevent="submitSearch($event)">
-            <span aria-hidden="true"></span>
-            <input type="search" id="contactSearch" name="search" value="<?= esc($search ?? '') ?>" placeholder="Search name, phone, or email" autocomplete="off" x-model="query" @input.debounce.450ms="$event.target.form.requestSubmit()">
-            <button type="submit">Search</button>
-            <a href="/contacts" aria-label="Clear search" data-ajax-link x-show="query.length > 0" @click="query = ''" style="display: none;">Clear</a>
+            <div class="contacts-search-field">
+                <span class="contacts-search-icon" aria-hidden="true"></span>
+                <input type="search" id="contactSearch" name="search" value="<?= esc($search ?? '') ?>" placeholder="Search name, phone, or email" autocomplete="off" x-model="query" @input.debounce.450ms="$event.target.form.requestSubmit()">
+            </div>
+            <div class="contacts-search-actions">
+                <button type="submit" class="contacts-search-btn" :disabled="loading" :class="{ 'is-loading': loading }">
+                    <span x-show="!loading">Search</span>
+                    <span x-show="loading" x-cloak>Searching</span>
+                </button>
+                <button type="button" class="contacts-clear-btn" :disabled="query.length === 0" :class="{ 'is-hidden': query.length === 0 }" aria-label="Clear search" @click="clearSearch()">
+                    Clear
+                </button>
+            </div>
         </form>
     </section>
 
@@ -191,6 +199,10 @@ function contactsBrowser() {
 
             this.query = formData.get('search') || '';
             this.load(url);
+        },
+        clearSearch() {
+            this.query = '';
+            this.load('/contacts');
         }
     };
 }

@@ -3,14 +3,21 @@
     var card = document.querySelector('[data-tilt-card]');
     var passwordToggles = document.querySelectorAll('[data-password-toggle]');
     var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var frameId = null;
 
     function setSceneOffset(x, y) {
         if (!scene || reduceMotion) {
             return;
         }
 
-        scene.style.setProperty('--scene-x', x.toFixed(2) + 'px');
-        scene.style.setProperty('--scene-y', y.toFixed(2) + 'px');
+        if (frameId) {
+            window.cancelAnimationFrame(frameId);
+        }
+
+        frameId = window.requestAnimationFrame(function () {
+            scene.style.setProperty('--scene-x', x.toFixed(2) + 'px');
+            scene.style.setProperty('--scene-y', y.toFixed(2) + 'px');
+        });
     }
 
     if (scene) {
@@ -19,7 +26,7 @@
             var x = event.clientX - rect.left - rect.width / 2;
             var y = event.clientY - rect.top - rect.height / 2;
 
-            setSceneOffset(x * 0.12, y * 0.12);
+            setSceneOffset(x * 0.035, y * 0.035);
         });
 
         scene.addEventListener('pointerleave', function () {
@@ -60,14 +67,4 @@
         });
     });
 
-    if (window.DeviceOrientationEvent && scene && !reduceMotion) {
-        window.addEventListener('deviceorientation', function (event) {
-            var gamma = event.gamma || 0;
-            var beta = event.beta || 0;
-            var x = Math.max(-18, Math.min(18, gamma));
-            var y = Math.max(-18, Math.min(18, beta - 45));
-
-            setSceneOffset(x * 1.1, y * 0.8);
-        });
-    }
 })();
