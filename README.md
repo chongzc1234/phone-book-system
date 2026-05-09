@@ -19,7 +19,7 @@ A CodeIgniter 4 web application for managing personal contacts. The system inclu
 
 ![System architecture](docs/images/system-architecture.png)
 
-The application follows a simple MVC structure:
+The application follows a simple MVC structure with SOLID principles:
 
 - Routes define public authentication pages and protected contact routes.
 - Controllers handle request flow, validation, sessions, redirects, and AJAX responses.
@@ -27,6 +27,8 @@ The application follows a simple MVC structure:
 - Repositories isolate contact data access logic.
 - Views render the authentication screens and contacts UI.
 - Filters protect contact routes from unauthenticated users.
+
+**SOLID Principles**: The application uses interfaces (e.g., `ContactRepositoryInterface`) to define contracts for data access layers. This adheres to the Dependency Inversion Principle (DIP) by ensuring that high-level modules depend on abstractions rather than concrete implementations, promoting loose coupling and testability.
 
 ## Tech Stack
 
