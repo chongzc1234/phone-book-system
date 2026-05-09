@@ -2,10 +2,11 @@
 
 namespace App\Repositories;
 
+use App\Interfaces\ContactRepositoryInterface;
 use App\Models\ContactModel;
 use Config\Services;
 
-class ContactRepository
+class ContactRepository implements ContactRepositoryInterface
 {
     protected ContactModel $contactModel;
     protected $pager;
