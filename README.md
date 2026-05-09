@@ -95,7 +95,7 @@ cp env .env
 CI_ENVIRONMENT = development
 app.baseURL = 'http://localhost:8080/'
 
-database.default.hostname = localhost
+database.default.hostname = 127.0.0.1
 database.default.database = phonebook_db
 database.default.username = root
 database.default.password =
