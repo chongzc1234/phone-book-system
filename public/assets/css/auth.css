@@ -188,6 +188,62 @@ body > .container {
     font-weight: 750;
 }
 
+.password-feedback {
+    margin-top: 0.75rem;
+    padding: 0.75rem;
+    background: rgba(16, 36, 53, 0.08);
+    border-radius: 0.5rem;
+    border: 1px solid rgba(16, 36, 53, 0.15);
+}
+
+.password-requirements {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.password-requirements li {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.8rem;
+    color: rgba(16, 36, 53, 0.7);
+    margin-bottom: 0.4rem;
+    transition: color 150ms ease;
+}
+
+.password-requirements li:last-child {
+    margin-bottom: 0;
+}
+
+.password-requirements .req-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.1rem;
+    height: 1.1rem;
+    font-size: 0.7rem;
+    font-weight: bold;
+    color: #ccc;
+    border: 1.5px solid #ccc;
+    border-radius: 50%;
+    transition: all 150ms ease;
+}
+
+.password-requirements li.met {
+    color: #2d7a4a;
+}
+
+.password-requirements li.met .req-icon {
+    background: #2d7a4a;
+    border-color: #2d7a4a;
+    color: white;
+}
+
+.password-requirements li.unmet {
+    color: rgba(16, 36, 53, 0.7);
+}
+
 .auth-options {
     display: flex;
     align-items: center;

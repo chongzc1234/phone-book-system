@@ -31,7 +31,15 @@ class AuthController extends BaseController
             'password' => 'required'
         ];
 
-        if (!$this->validate($rules)) {
+        $messages = [
+            'password' => [
+                'required' => 'Password is required.',
+                'min_length' => 'Password must be at least 8 characters long.',
+                'regex_match' => 'Password must contain at least one number and one special character (!@#$%^&* etc).'
+            ]
+        ];
+
+        if (!$this->validate($rules, $messages)) {
             return view('auth/login', [
                 'validation' => $this->validator
             ]);
@@ -71,11 +79,22 @@ class AuthController extends BaseController
         // Strict registration form validation
         $rules = [
             'username'         => 'required|min_length[3]|max_length[50]|is_unique[users.username]',
-            'password'         => 'required|min_length[5]',
+            'password'         => 'required|min_length[8]|regex_match[/[0-9]/]|regex_match[/[!@#$%^&*()_+\-=\[\]{};:\'",.\/<>?]/]',
             'confirm_password' => 'matches[password]'
         ];
 
-        if (!$this->validate($rules)) {
+        $messages = [
+            'password' => [
+                'required' => 'Password is required.',
+                'min_length' => 'Password must be at least 8 characters long.',
+                'regex_match' => 'Password must contain at least one number and one special character (!@#$%^&* etc).'
+            ],
+            'confirm_password' => [
+                'matches' => 'Passwords do not match.'
+            ]
+        ];
+
+        if (!$this->validate($rules, $messages)) {
             return view('auth/register', [
                 'validation' => $this->validator
             ]);

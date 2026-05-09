@@ -38,6 +38,9 @@
                     <input id="password" type="password" name="password" required autocomplete="current-password" placeholder=" ">
                     <label for="password">Password</label>
                     <button class="field-icon field-button" type="button" data-password-toggle aria-label="Show password">Show</button>
+                    <?php if(isset($validation) && $validation->hasError('password')): ?>
+                        <small class="auth-error"><?= esc($validation->getError('password')) ?></small>
+                    <?php endif; ?>
                 </div>
 
                 <div class="auth-options">

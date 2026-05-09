@@ -624,6 +624,24 @@ body > .container {
     color: #697d89;
 }
 
+.contact-form-field .form-control.is-invalid {
+    border-color: #a2293a;
+    background-color: rgba(162, 41, 58, 0.05);
+}
+
+.contact-form-field .form-control.is-invalid:focus {
+    border-color: #a2293a;
+    box-shadow: 0 0 0 0.25rem rgba(162, 41, 58, 0.13);
+}
+
+.contact-field-error {
+    display: block;
+    margin-top: 0.35rem;
+    color: #a2293a;
+    font-size: 0.85rem;
+    font-weight: 700;
+}
+
 .edit-preview {
     display: flex;
     align-items: center;
