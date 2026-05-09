@@ -1,7 +1,7 @@
 body {
     min-height: 100vh;
     overflow-x: hidden;
-    background: #0c2230;
+    background: #eef6f8;
 }
 
 body > .container {
@@ -11,49 +11,47 @@ body > .container {
 }
 
 .auth-scene {
-    --scene-x: 0px;
-    --scene-y: 0px;
     position: relative;
     min-height: 100svh;
     display: grid;
     place-items: center;
-    overflow: hidden;
-    isolation: isolate;
     padding: clamp(5rem, 8vw, 6.5rem) 1rem 2rem;
     color: #102435;
-    background: #102637;
+    background:
+        linear-gradient(90deg, rgba(8, 27, 40, 0.78), rgba(8, 27, 40, 0.22) 48%, rgba(8, 27, 40, 0.76)),
+        radial-gradient(circle at 50% 22%, rgba(236, 250, 255, 0.85), rgba(138, 198, 224, 0.42) 16rem, transparent 31rem),
+        linear-gradient(180deg, #102637 0%, #356d94 52%, #c8e0ec 100%);
+    overflow: hidden;
 }
 
-.auth-bg {
+.auth-scene::before,
+.auth-scene::after {
+    content: "";
     position: absolute;
-    inset: -3%;
-    z-index: 0;
+    inset: auto 0 0;
     pointer-events: none;
-    background:
-        radial-gradient(circle at 52% 20%, rgba(237, 250, 255, 0.82), rgba(144, 198, 226, 0.34) 16rem, transparent 28rem),
-        linear-gradient(180deg, rgba(5, 19, 30, 0.06), rgba(5, 19, 30, 0.24)),
-        url("/assets/images/auth-parallax-bg.png"),
-        linear-gradient(180deg, #0c2230 0%, #275d82 48%, #bed8e8 100%);
-    background-size: cover;
-    background-position: center;
-    transform: translate3d(calc(var(--scene-x) * 0.45), calc(var(--scene-y) * 0.35), 0) scale(1.04);
-    transition: transform 160ms ease-out;
-    will-change: transform;
 }
 
-.auth-vignette {
-    position: absolute;
-    inset: 0;
-    z-index: 1;
-    pointer-events: none;
+.auth-scene::before {
+    height: 38%;
     background:
-        linear-gradient(90deg, rgba(4, 15, 24, 0.52), transparent 28%, transparent 72%, rgba(4, 15, 24, 0.55)),
-        linear-gradient(180deg, rgba(4, 15, 24, 0.18), transparent 42%, rgba(4, 15, 24, 0.32));
+        repeating-linear-gradient(78deg, transparent 0 1.1rem, rgba(8, 27, 40, 0.52) 1.18rem 1.32rem, transparent 1.45rem 2.3rem),
+        linear-gradient(180deg, transparent, rgba(8, 27, 40, 0.58));
+    opacity: 0.75;
+}
+
+.auth-scene::after {
+    height: 100%;
+    background:
+        linear-gradient(92deg, transparent 0 12%, rgba(7, 24, 35, 0.9) 13% 16%, transparent 17% 34%, rgba(7, 24, 35, 0.66) 35% 37%, transparent 38% 73%, rgba(7, 24, 35, 0.86) 74% 78%, transparent 79%),
+        radial-gradient(ellipse at 15% 0%, rgba(7, 24, 35, 0.82) 0 16%, transparent 17%),
+        radial-gradient(ellipse at 82% 0%, rgba(7, 24, 35, 0.82) 0 18%, transparent 19%);
+    opacity: 0.6;
 }
 
 .auth-nav {
     position: absolute;
-    z-index: 5;
+    z-index: 3;
     inset: 0 0 auto;
     display: flex;
     align-items: center;
@@ -72,9 +70,8 @@ body > .container {
 
 .auth-panel-wrap {
     position: relative;
-    z-index: 4;
+    z-index: 2;
     width: min(100%, 27rem);
-    perspective: 900px;
 }
 
 .auth-panel {
@@ -82,18 +79,9 @@ body > .container {
     padding: clamp(1.35rem, 4vw, 2.2rem);
     border: 1px solid rgba(255, 255, 255, 0.58);
     border-radius: 1.15rem;
-    background:
-        linear-gradient(145deg, rgba(237, 249, 255, 0.82), rgba(181, 217, 235, 0.55)),
-        radial-gradient(circle at top left, rgba(255,255,255,0.42), transparent 14rem);
-    box-shadow: 0 1.8rem 4rem rgba(4, 23, 34, 0.38), inset 0 0 2rem rgba(255,255,255,0.2);
-    backdrop-filter: blur(16px) saturate(130%);
-    transform: translate3d(calc(var(--scene-x) * -0.12), calc(var(--scene-y) * -0.08), 0) rotateX(var(--tilt-y, 0deg)) rotateY(var(--tilt-x, 0deg));
-    transition: transform 150ms ease-out, box-shadow 180ms ease;
-    will-change: transform;
-}
-
-.auth-panel:hover {
-    box-shadow: 0 2rem 4.6rem rgba(4, 23, 34, 0.46), inset 0 0 2rem rgba(255,255,255,0.22);
+    background: rgba(235, 249, 255, 0.84);
+    box-shadow: 0 1.8rem 4rem rgba(4, 23, 34, 0.36);
+    backdrop-filter: blur(14px) saturate(125%);
 }
 
 .auth-kicker {
@@ -294,21 +282,5 @@ body > .container {
 
     .auth-panel {
         border-radius: 1rem;
-    }
-}
-
-@media (prefers-reduced-motion: reduce) {
-    *,
-    *::before,
-    *::after {
-        animation-duration: 0.001ms !important;
-        animation-iteration-count: 1 !important;
-        scroll-behavior: auto !important;
-        transition-duration: 0.001ms !important;
-    }
-
-    .auth-bg,
-    .auth-panel {
-        transform: none !important;
     }
 }

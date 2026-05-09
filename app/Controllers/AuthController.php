@@ -27,8 +27,8 @@ class AuthController extends BaseController
     public function loginProcess()
     {
         $rules = [
-            'username' => 'required|min_length[3]',
-            'password' => 'required|min_length[5]'
+            'username' => 'required',
+            'password' => 'required'
         ];
 
         if (!$this->validate($rules)) {

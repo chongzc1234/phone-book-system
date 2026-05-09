@@ -5,16 +5,13 @@
 <?= $this->endSection() ?>
 
 <?= $this->section('content') ?>
-<main class="auth-scene" data-auth-scene>
+<main class="auth-scene">
     <nav class="auth-nav" aria-label="Primary">
         <a class="auth-brand" href="/login" aria-label="Phone Book System home">PhoneBook</a>
     </nav>
 
-    <div class="auth-bg" aria-hidden="true"></div>
-    <div class="auth-vignette" aria-hidden="true"></div>
-
     <section class="auth-panel-wrap" aria-labelledby="login-title">
-        <div class="auth-panel" data-tilt-card>
+        <div class="auth-panel">
             <p class="auth-kicker">Welcome back</p>
             <h1 id="login-title">Login</h1>
 
