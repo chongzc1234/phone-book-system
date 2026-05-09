@@ -37,6 +37,16 @@ class ContactRepository
         return $this->contactModel->save($data);
     }
 
+    public function getContactByIdSecurely($contactId, $userId)
+    {
+        return $this->contactModel->where(['id' => $contactId, 'user_id' => $userId])->first();
+    }
+
+    public function updateContact($id, $data)
+    {
+        return $this->contactModel->update($id, $data);
+    }
+
     public function deleteContactSecurely(int $id, int $userId)
     {
         $contact = $this->contactModel
