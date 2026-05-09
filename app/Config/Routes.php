@@ -17,4 +17,6 @@ $routes->group('contacts', ['filter' => 'auth'], function($routes) {
     $routes->get('/', 'ContactController::index');
     $routes->post('store', 'ContactController::store');
     $routes->delete('delete/(:num)', 'ContactController::delete/$1'); 
+    $routes->get('edit/(:num)', 'ContactController::edit/$1');
+    $routes->post('update/(:num)', 'ContactController::update/$1');
 });

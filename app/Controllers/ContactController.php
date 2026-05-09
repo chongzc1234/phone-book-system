@@ -69,6 +69,77 @@ class ContactController extends BaseController
         return redirect()->to('/contacts');
     }
 
+    public function edit($id)
+    {
+        $userId = session()->get('user_id');
+        $contact = $this->contactRepo->getContactByIdSecurely($id, $userId);
+
+        if ($contact) {
+            return $this->respond($contact);
+        }
+        return $this->failNotFound('Contact not found.');
+    }
+
+    public function update($id)
+    {
+        $userId = session()->get('user_id');
+        $contact = $this->contactRepo->getContactByIdSecurely($id, $userId);
+
+        if (!$contact) {
+            session()->setFlashdata('error', 'Unauthorized access.');
+            return redirect()->to('/contacts');
+        }
+
+        // validation rules, including image validation
+        $rules = [
+            'name'  => 'required|min_length[2]',
+            'phone' => 'required|min_length[8]',
+            'image' => 'is_image[image]|ext_in[image,png,jpg,jpeg]|max_size[image,2048]'
+        ];
+
+        if (!$this->validate($rules)) {
+            session()->setFlashdata('error', $this->validator->listErrors());
+            return redirect()->to('/contacts');
+        }
+
+        $updateData = [
+            'name'  => $this->request->getPost('name'),
+            'phone' => $this->request->getPost('phone'),
+            'email' => $this->request->getPost('email'),
+        ];
+
+        $removeImage = $this->request->getPost('remove_image') === '1';
+        if ($removeImage) {
+            if ($contact['image_path'] !== 'default.png' && file_exists(FCPATH . 'uploads/' . $contact['image_path'])) {
+                unlink(FCPATH . 'uploads/' . $contact['image_path']);
+            }
+            $updateData['image_path'] = 'default.png';
+        }
+
+        // upload processing
+        $file = $this->request->getFile('image');
+        if ($file && $file->isValid() && !$file->hasMoved()) {
+            $newName = $file->getRandomName();
+            
+            \Config\Services::image()
+                ->withFile($file)
+                ->fit(300, 300, 'center')
+                ->save(FCPATH . 'uploads/' . $newName, 80);
+
+            $updateData['image_path'] = $newName;
+
+            // if user uploaded new image, automatically delete the old image (except for default.png)
+            if ($contact['image_path'] !== 'default.png' && file_exists(FCPATH . 'uploads/' . $contact['image_path'])) {
+                unlink(FCPATH . 'uploads/' . $contact['image_path']);
+            }
+        }
+
+        $this->contactRepo->updateContact($id, $updateData);
+
+        session()->setFlashdata('success', 'Contact updated successfully!');
+        return redirect()->to('/contacts');
+    }
+
     public function delete($id)
     {
         $userId = session()->get('user_id');
