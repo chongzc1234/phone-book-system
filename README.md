@@ -160,20 +160,6 @@ public/uploads/
 
 Images are resized and cropped to `300x300` before saving. Contacts without an uploaded image use a generated avatar.
 
-## Testing
-
-Run the test suite with:
-
-```bash
-composer test
-```
-
-or:
-
-```bash
-vendor/bin/phpunit
-```
-
 ## Notes
 
 - Point your web server document root to the `public/` directory.
