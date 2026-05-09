@@ -12,3 +12,9 @@ $routes->post('/loginProcess', 'AuthController::loginProcess');
 $routes->get('/register', 'AuthController::register');
 $routes->post('/registerProcess', 'AuthController::registerProcess');
 $routes->get('/logout', 'AuthController::logout');
+
+$routes->group('contacts', ['filter' => 'auth'], function($routes) {
+    $routes->get('/', 'ContactController::index');
+    $routes->post('store', 'ContactController::store');
+    $routes->delete('delete/(:num)', 'ContactController::delete/$1'); 
+});
