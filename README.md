@@ -14,6 +14,14 @@ A CodeIgniter 4 web application for managing personal contacts. The system inclu
 - AJAX pagination powered by Alpine.js and `fetch()`
 - Responsive login, register, and contacts pages
 - Repository pattern for contact data access
+- **Password Validation**: Both frontend and backend validation enforce strong passwords:
+  - Minimum 8 characters
+  - At least 1 number
+  - At least 1 special character (!@#$%^&* etc.)
+  - Real-time frontend feedback during password entry
+- **Contact Field Validation**: Both frontend and backend validation for phone and email:
+  - Phone validation: minimum 8 characters, supports digits, +, -, (), spaces, and dots
+  - Email validation: valid email format validation with instant feedback
 
 ## System Architecture
 
@@ -88,7 +96,7 @@ CI_ENVIRONMENT = development
 app.baseURL = 'http://localhost:8080/'
 
 database.default.hostname = localhost
-database.default.database = phone_book_system
+database.default.database = phonedb
 database.default.username = root
 database.default.password =
 database.default.DBDriver = MySQLi
