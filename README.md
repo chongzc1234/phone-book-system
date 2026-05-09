@@ -88,7 +88,7 @@ CI_ENVIRONMENT = development
 app.baseURL = 'http://localhost:8080/'
 
 database.default.hostname = localhost
-database.default.database = phone_book_system
+database.default.database = phonedb
 database.default.username = root
 database.default.password =
 database.default.DBDriver = MySQLi

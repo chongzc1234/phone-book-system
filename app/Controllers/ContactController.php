@@ -23,7 +23,7 @@ class ContactController extends BaseController
         $search = trim((string) $this->request->getGet('search'));
 
         $data = [
-            'contacts' => $this->contactRepo->getPaginatedContactsByUser($userId, 5, $search),
+            'contacts' => $this->contactRepo->getPaginatedContactsByUser($userId, 6, $search),
             'pager'    => $this->contactRepo->getPager(),
             'search'   => $search,
         ];
