@@ -1,69 +1,169 @@
-# CodeIgniter 4 Application Starter
+# Phone Book System
 
-## What is CodeIgniter?
+A CodeIgniter 4 web application for managing personal contacts. The system includes user authentication, protected contact management, profile image uploads, searchable/paginated contact cards, AJAX pagination, and a responsive interface for desktop and mobile.
 
-CodeIgniter is a PHP full-stack web framework that is light, fast, flexible and secure.
-More information can be found at the [official site](https://codeigniter.com).
+## Features
 
-This repository holds a composer-installable app starter.
-It has been built from the
-[development repository](https://github.com/codeigniter4/CodeIgniter4).
+- User registration, login, logout, and session-based access control
+- Protected contacts area using `AuthFilter`
+- Create, view, edit, and delete contacts
+- Contact profile image upload with server-side image resizing/cropping
+- Secure per-user contact access
+- AJAX contact delete flow with SweetAlert2 confirmation
+- Full-list backend search by name, phone, or email
+- AJAX pagination powered by Alpine.js and `fetch()`
+- Responsive login, register, and contacts pages
+- Repository pattern for contact data access
 
-More information about the plans for version 4 can be found in [CodeIgniter 4](https://forum.codeigniter.com/forumdisplay.php?fid=28) on the forums.
+## System Architecture
 
-You can read the [user guide](https://codeigniter.com/user_guide/)
-corresponding to the latest version of the framework.
+![System architecture](docs/images/system-architecture.png)
 
-## Installation & updates
+The application follows a simple MVC structure with SOLID principles:
 
-`composer create-project codeigniter4/appstarter` then `composer update` whenever
-there is a new release of the framework.
+- Routes define public authentication pages and protected contact routes.
+- Controllers handle request flow, validation, sessions, redirects, and AJAX responses.
+- Models represent database tables.
+- Repositories isolate contact data access logic.
+- Views render the authentication screens and contacts UI.
+- Filters protect contact routes from unauthenticated users.
 
-When updating, check the release notes to see if there are any changes you might need to apply
-to your `app` folder. The affected files can be copied or merged from
-`vendor/codeigniter4/framework/app`.
+**SOLID Principles**: The application uses interfaces (e.g., `ContactRepositoryInterface`) to define contracts for data access layers. This adheres to the Dependency Inversion Principle (DIP) by ensuring that high-level modules depend on abstractions rather than concrete implementations, promoting loose coupling and testability.
 
-## Setup
+## Tech Stack
 
-Copy `env` to `.env` and tailor for your app, specifically the baseURL
-and any database settings.
+- PHP 8.2+
+- CodeIgniter 4.7
+- MySQL or another CodeIgniter-supported database
+- Bootstrap 5
+- Alpine.js
+- SweetAlert2
+- FakerPHP for seed data
 
-## Important Change with index.php
+## Project Structure
 
-`index.php` is no longer in the root of the project! It has been moved inside the *public* folder,
-for better security and separation of components.
+```text
+app/
+  Controllers/
+    AuthController.php
+    ContactController.php
+  Database/
+    Migrations/
+    Seeds/PhoneBookSeeder.php
+  Filters/AuthFilter.php
+  Interfaces/ContactRepositoryInterface.php
+  Models/
+    ContactModel.php
+    UserModel.php
+  Repositories/ContactRepository.php
+  Views/
+    auth/
+    contacts/
+    layout/main.php
+docs/images/
+  system-architecture.png
+public/
+  assets/
+  uploads/
+```
 
-This means that you should configure your web server to "point" to your project's *public* folder, and
-not to the project root. A better practice would be to configure a virtual host to point there. A poor practice would be to point your web server to the project root and expect to enter *public/...*, as the rest of your logic and the
-framework are exposed.
+## Installation
 
-**Please** read the user guide for a better explanation of how CI4 works!
+1. Install dependencies:
 
-## Repository Management
+```bash
+composer install
+```
 
-We use GitHub issues, in our main repository, to track **BUGS** and to track approved **DEVELOPMENT** work packages.
-We use our [forum](http://forum.codeigniter.com) to provide SUPPORT and to discuss
-FEATURE REQUESTS.
+2. Create your environment file:
 
-This repository is a "distribution" one, built by our release preparation script.
-Problems with it can be raised on our forum, or as issues in the main repository.
+```bash
+cp env .env
+```
 
-## Server Requirements
+3. Configure `.env`:
 
-PHP version 8.2 or higher is required, with the following extensions installed:
+```ini
+CI_ENVIRONMENT = development
+app.baseURL = 'http://localhost:8080/'
 
-- [intl](http://php.net/manual/en/intl.requirements.php)
-- [mbstring](http://php.net/manual/en/mbstring.installation.php)
+database.default.hostname = localhost
+database.default.database = phone_book_system
+database.default.username = root
+database.default.password =
+database.default.DBDriver = MySQLi
+database.default.port = 3306
+```
 
-> [!WARNING]
-> - The end of life date for PHP 7.4 was November 28, 2022.
-> - The end of life date for PHP 8.0 was November 26, 2023.
-> - The end of life date for PHP 8.1 was December 31, 2025.
-> - If you are still using below PHP 8.2, you should upgrade immediately.
-> - The end of life date for PHP 8.2 will be December 31, 2026.
+4. Run migrations:
 
-Additionally, make sure that the following extensions are enabled in your PHP:
+```bash
+php spark migrate
+```
 
-- json (enabled by default - don't turn it off)
-- [mysqlnd](http://php.net/manual/en/mysqlnd.install.php) if you plan to use MySQL
-- [libcurl](http://php.net/manual/en/curl.requirements.php) if you plan to use the HTTP\CURLRequest library
+5. Optional: seed demo data:
+
+```bash
+php spark db:seed PhoneBookSeeder
+```
+
+Seeded demo account:
+
+```text
+Username: testadmin
+Password: password123
+```
+
+6. Start the development server:
+
+```bash
+php spark serve
+```
+
+Open the app at:
+
+```text
+http://localhost:8080
+```
+
+## Main Routes
+
+| Method | Route | Description |
+| --- | --- | --- |
+| GET | `/` | Login page |
+| GET | `/login` | Login page |
+| POST | `/loginProcess` | Process login |
+| GET | `/register` | Register page |
+| POST | `/registerProcess` | Process registration |
+| GET | `/logout` | Logout user |
+| GET | `/contacts` | Contact dashboard |
+| POST | `/contacts/store` | Create contact |
+| GET | `/contacts/edit/{id}` | Fetch contact for edit modal |
+| POST | `/contacts/update/{id}` | Update contact |
+| DELETE | `/contacts/delete/{id}` | Delete contact |
+
+## Contact Search And Pagination
+
+Search is handled on the backend before pagination, so results can be found across all pages. The contacts page uses Alpine.js and AJAX to update only the contact list and pagination controls without refreshing the full page.
+
+Example:
+
+```text
+/contacts?search=lina
+```
+
+## Image Uploads
+
+Uploaded contact profile images are stored in:
+
+```text
+public/uploads/
+```
+
+Images are resized and cropped to `300x300` before saving. Contacts without an uploaded image use a generated avatar.
+
+## Notes
+
+- Point your web server document root to the `public/` directory.
+- Keep `.env` out of version control.
+- Ensure `public/uploads/` is writable by the web server.

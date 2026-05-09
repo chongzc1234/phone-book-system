@@ -1,42 +1,65 @@
 <?= $this->extend('layout/main') ?>
 
+<?= $this->section('styles') ?>
+<link href="/assets/css/auth.css" rel="stylesheet">
+<?= $this->endSection() ?>
+
 <?= $this->section('content') ?>
-<div class="card auth-card">
-    <div class="card-body p-4">
-        <h3 class="text-center mb-4">Register</h3>
+<main class="auth-scene" data-auth-scene>
+    <nav class="auth-nav" aria-label="Primary">
+        <a class="auth-brand" href="/login" aria-label="Phone Book System home">PhoneBook</a>
+    </nav>
 
-        <form action="/registerProcess" method="POST">
-            <?= csrf_field() ?>
-            
-            <div class="mb-3">
-                <label>Username</label>
-                <input type="text" name="username" class="form-control" value="<?= set_value('username') ?>" required>
-                <?php if(isset($validation) && $validation->hasError('username')): ?>
-                    <small class="text-danger"><?= $validation->getError('username') ?></small>
-                <?php endif; ?>
-            </div>
+    <div class="auth-bg" aria-hidden="true"></div>
+    <div class="auth-vignette" aria-hidden="true"></div>
 
-            <div class="mb-3">
-                <label>Password</label>
-                <input type="password" name="password" class="form-control" required>
-                <?php if(isset($validation) && $validation->hasError('password')): ?>
-                    <small class="text-danger"><?= $validation->getError('password') ?></small>
-                <?php endif; ?>
-            </div>
+    <section class="auth-panel-wrap auth-panel-wrap-register" aria-labelledby="register-title">
+        <div class="auth-panel" data-tilt-card>
+            <p class="auth-kicker">Start your phone book</p>
+            <h1 id="register-title">Register</h1>
 
-            <div class="mb-3">
-                <label>Confirm Password</label>
-                <input type="password" name="confirm_password" class="form-control" required>
-                <?php if(isset($validation) && $validation->hasError('confirm_password')): ?>
-                    <small class="text-danger"><?= $validation->getError('confirm_password') ?></small>
-                <?php endif; ?>
-            </div>
+            <form action="/registerProcess" method="POST" class="auth-form">
+                <?= csrf_field() ?>
 
-            <button type="submit" class="btn btn-success w-100">Register</button>
-        </form>
-        <div class="text-center mt-3">
-            <a href="/login" class="text-decoration-none">Already have an account? Login</a>
+                <div class="auth-field">
+                    <input id="username" type="text" name="username" value="<?= esc(set_value('username')) ?>" required autocomplete="username" placeholder=" ">
+                    <label for="username">Username</label>
+                    <span class="field-icon" aria-hidden="true">@</span>
+                    <?php if(isset($validation) && $validation->hasError('username')): ?>
+                        <small class="auth-error"><?= esc($validation->getError('username')) ?></small>
+                    <?php endif; ?>
+                </div>
+
+                <div class="auth-field">
+                    <input id="password" type="password" name="password" required autocomplete="new-password" placeholder=" ">
+                    <label for="password">Password</label>
+                    <button class="field-icon field-button" type="button" data-password-toggle aria-label="Show password">Show</button>
+                    <?php if(isset($validation) && $validation->hasError('password')): ?>
+                        <small class="auth-error"><?= esc($validation->getError('password')) ?></small>
+                    <?php endif; ?>
+                </div>
+
+                <div class="auth-field">
+                    <input id="confirm_password" type="password" name="confirm_password" required autocomplete="new-password" placeholder=" ">
+                    <label for="confirm_password">Confirm Password</label>
+                    <button class="field-icon field-button" type="button" data-password-toggle aria-label="Show confirm password">Show</button>
+                    <?php if(isset($validation) && $validation->hasError('confirm_password')): ?>
+                        <small class="auth-error"><?= esc($validation->getError('confirm_password')) ?></small>
+                    <?php endif; ?>
+                </div>
+
+                <button type="submit" class="auth-submit">
+                    <span>Register</span>
+                    <span class="submit-arrow" aria-hidden="true">-></span>
+                </button>
+            </form>
+
+            <p class="auth-switch">Already have an account? <a href="/login">Login</a></p>
         </div>
     </div>
-</div>
+</main>
+<?= $this->endSection() ?>
+
+<?= $this->section('scripts') ?>
+<script src="/assets/js/auth.js"></script>
 <?= $this->endSection() ?>
