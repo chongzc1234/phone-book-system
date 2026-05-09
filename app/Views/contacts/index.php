@@ -306,7 +306,7 @@ function deleteContact(id) {
 </script>
 <?= $this->endSection() ?>
 
-??= $this->section('scripts') ?>
+<?= $this->section('scripts') ?>
 <script src="/assets/js/contacts.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 <?= $this->endSection() ?>
