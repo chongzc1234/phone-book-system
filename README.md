@@ -70,8 +70,10 @@ app/
     layout/main.php
 docs/images/
   system-architecture.png
+phonebook_db.sql
 public/
   assets/
+  favicon.svg
   uploads/
 ```
 
@@ -103,13 +105,21 @@ database.default.DBDriver = MySQLi
 database.default.port = 3306
 ```
 
-4. Run migrations:
+4. Create the database tables by importing the SQL file into phpMyAdmin:
+
+```text
+phonebook_db.sql
+```
+
+If you import `phonebook_db.sql` into phpMyAdmin, running `php spark migrate` is not needed.
+
+5. Optional: run migrations instead of importing the SQL file:
 
 ```bash
 php spark migrate
 ```
 
-5. Optional: seed demo data:
+6. Optional: seed demo data:
 
 ```bash
 php spark db:seed PhoneBookSeeder
@@ -122,7 +132,7 @@ Username: testadmin
 Password: password123
 ```
 
-6. Start the development server:
+7. Start the development server:
 
 ```bash
 php spark serve
