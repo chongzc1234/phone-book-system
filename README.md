@@ -170,8 +170,3 @@ public/uploads/
 
 Images are resized and cropped to `300x300` before saving. Contacts without an uploaded image use a generated avatar.
 
-## Notes
-
-- Point your web server document root to the `public/` directory.
-- Keep `.env` out of version control.
-- Ensure `public/uploads/` is writable by the web server.
